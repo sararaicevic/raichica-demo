@@ -6,12 +6,20 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
-import h5py
 import numpy as np
 import streamlit as st
-import tensorflow as tf
 from PIL import Image
 from openai import OpenAI
+
+try:
+    import h5py
+except Exception:
+    h5py = None
+
+try:
+    import tensorflow as tf
+except Exception:
+    tf = None
 
 MODEL_PATH = "raichica_v1.h5"
 CONFIDENCE_THRESHOLD = 0.80
@@ -46,6 +54,12 @@ class InputCheckResult:
 def load_model(model_path: str = MODEL_PATH):
     if not Path(model_path).exists():
         return None
+    if tf is None:
+        st.warning(
+            "TensorFlow is not available in this environment. "
+            "Tier 1 will be skipped, and the app will use Vision API fallback."
+        )
+        return None
     try:
         return tf.keras.models.load_model(model_path, compile=False)
     except Exception:
@@ -60,6 +74,8 @@ def load_model(model_path: str = MODEL_PATH):
 
 
 def _load_model_with_h5_compat(model_path: str):
+    if tf is None or h5py is None:
+        raise RuntimeError("TensorFlow/h5py not available")
     # Some .h5 files saved with newer Keras cannot be deserialized by TF 2.15.
     # Rebuild the known architecture and load weights by layer name.
     with h5py.File(model_path, "r") as h5_file:
@@ -132,6 +148,8 @@ def load_class_names(path: str = "class_names.txt") -> List[str]:
 
 
 def preprocess_image(image: Image.Image, target_size=(224, 224)) -> np.ndarray:
+    if tf is None:
+        raise RuntimeError("TensorFlow is not available for local preprocessing")
     image = image.convert("RGB").resize(target_size)
     arr = np.asarray(image).astype("float32")
     arr = tf.keras.applications.mobilenet_v2.preprocess_input(arr)

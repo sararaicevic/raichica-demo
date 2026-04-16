@@ -136,8 +136,12 @@ This app can be deployed on **Streamlit Community Cloud**.
 ### Steps
 
 1. Push your project to GitHub.
-2. Connect it to Streamlit Cloud and set the entry point to `app.py`.
-3. Add your secrets (for example, `OPENAI_API_KEY`) in the Streamlit secrets settings.
+2. Ensure `runtime.txt` exists with:
+   ```text
+   python-3.11.9
+   ```
+3. Connect it to Streamlit Cloud and set the entry point to `app.py`.
+4. Add your secrets (for example, `OPENAI_API_KEY`) in the Streamlit secrets settings.
 
 ## Troubleshooting
 
@@ -145,6 +149,7 @@ This app can be deployed on **Streamlit Community Cloud**.
 
 Ensure you are using **Python 3.11.x** and reinstall from `requirements.txt`.
 This project uses TensorFlow CPU `2.16.2` for better compatibility with newer Keras-saved models.
+On Python `3.13+`, TensorFlow is skipped and the app runs in API fallback mode (Tier 2/3 only).
 
 ### `streamlit: command not found`
 
