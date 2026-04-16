@@ -150,6 +150,7 @@ This app can be deployed on **Streamlit Community Cloud**.
 Ensure you are using **Python 3.11.x** and reinstall from `requirements.txt`.
 This project uses TensorFlow CPU `2.16.2` for better compatibility with newer Keras-saved models.
 On Python `3.13+`, TensorFlow is skipped and the app runs in API fallback mode (Tier 2/3 only).
+For compatibility, `requirements.txt` uses `streamlit==1.32.0` on Python `<3.13` and `streamlit==1.56.0` on Python `>=3.13`.
 
 ### `streamlit: command not found`
 
